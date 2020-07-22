@@ -438,7 +438,7 @@ func (s SqlTeamStore) teamSearchQuery(term string, opts *model.TeamSearch, count
 		}
 	}
 
-	if opts.IncludeGroupConstrained != nil && *opts.IncludeGroupConstrained == true {
+	if opts.IncludeGroupConstrained != nil && *opts.IncludeGroupConstrained {
 		if teamFilters == nil {
 			teamFilters = sq.Eq{"GroupConstrained": true}
 		} else {
