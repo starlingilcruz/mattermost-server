@@ -327,8 +327,8 @@ func testTeamStoreSearchAll(t *testing.T, ss store.Store) {
 		{
 			"Search for all 3 teams filter by allow open invite = false",
 			&model.TeamSearch{Term: "zzzzzz", AllowOpenInvite: model.NewBool(false)},
-			2,
-			[]string{p.Id, g.Id},
+			1,
+			[]string{p.Id},
 		},
 		{
 			"Search for all 3 teams filter by group constrained",
@@ -345,38 +345,26 @@ func testTeamStoreSearchAll(t *testing.T, ss store.Store) {
 		{
 			"Search for all 3 teams filter by allow open invite and include group constrained",
 			&model.TeamSearch{Term: "zzzzzz", AllowOpenInvite: model.NewBool(true), GroupConstrained: model.NewBool(true)},
-			0,
-			[]string{},
+			2,
+			[]string{o.Id, g.Id},
 		},
 		{
 			"Search for all 3 teams filter by group constrained and not open invite",
 			&model.TeamSearch{Term: "zzzzzz", GroupConstrained: model.NewBool(true), AllowOpenInvite: model.NewBool(false)},
-			1,
-			[]string{g.Id},
+			2,
+			[]string{g.Id, p.Id},
 		},
 		{
 			"Search for all 3 teams filter by group constrained false and open invite",
 			&model.TeamSearch{Term: "zzzzzz", GroupConstrained: model.NewBool(false), AllowOpenInvite: model.NewBool(true)},
-			1,
-			[]string{o.Id},
+			2,
+			[]string{o.Id, p.Id},
 		},
 		{
 			"Search for all 3 teams filter by group constrained false and open invite false",
 			&model.TeamSearch{Term: "zzzzzz", GroupConstrained: model.NewBool(false), AllowOpenInvite: model.NewBool(false)},
-			1,
-			[]string{p.Id},
-		},
-		{
-			"Search for all 3 teams filter by include group constrained and open invite true",
-			&model.TeamSearch{Term: "zzzzzz", IncludeGroupConstrained: model.NewBool(true), AllowOpenInvite: model.NewBool(true)},
 			2,
-			[]string{g.Id, o.Id},
-		},
-		{
-			"Search for all 3 teams filter by include group constrained and open invite false",
-			&model.TeamSearch{Term: "zzzzzz", IncludeGroupConstrained: model.NewBool(true), AllowOpenInvite: model.NewBool(false)},
-			2,
-			[]string{g.Id, p.Id},
+			[]string{p.Id, o.Id},
 		},
 	}
 
