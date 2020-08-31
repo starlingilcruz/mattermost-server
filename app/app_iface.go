@@ -447,6 +447,7 @@ type AppIface interface {
 	DeletePostFiles(post *model.Post)
 	DeletePreferences(userId string, preferences model.Preferences) *model.AppError
 	DeleteReactionForPost(reaction *model.Reaction) *model.AppError
+	DeleteRole(roleId string) (*model.Role, *model.AppError)
 	DeleteScheme(schemeId string) (*model.Scheme, *model.AppError)
 	DeleteSidebarCategory(userId, teamId, categoryId string) *model.AppError
 	DeleteToken(token *model.Token) *model.AppError

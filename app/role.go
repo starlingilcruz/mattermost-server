@@ -164,6 +164,16 @@ func (a *App) UpdateRole(role *model.Role) (*model.Role, *model.AppError) {
 	return savedRole, nil
 }
 
+func (a *App) DeleteRole(roleId string) (*model.Role, *model.AppError) {
+	role, err := a.Srv().Store.Role().Delete(roleId)
+
+	if err != nil {
+		return nil, err
+	}
+	
+	return role, nil
+}
+
 func (a *App) CheckRolesExist(roleNames []string) *model.AppError {
 	roles, err := a.GetRolesByNames(roleNames)
 	if err != nil {
