@@ -35,6 +35,9 @@ func (api *API) InitSystem() {
 
 	api.BaseRoutes.System.Handle("/timezones", api.ApiSessionRequired(getSupportedTimezones)).Methods("GET")
 
+	api.BaseRoutes.System.Handle("/permissions", api.ApiSessionRequired(getPermissions)).Methods("GET")
+
+
 	api.BaseRoutes.ApiRoot.Handle("/audits", api.ApiSessionRequired(getAudits)).Methods("GET")
 	api.BaseRoutes.ApiRoot.Handle("/email/test", api.ApiSessionRequired(testEmail)).Methods("POST")
 	api.BaseRoutes.ApiRoot.Handle("/site_url/test", api.ApiSessionRequired(testSiteURL)).Methods("POST")
@@ -352,6 +355,25 @@ func getSupportedTimezones(c *Context, w http.ResponseWriter, r *http.Request) {
 		c.Log.Warn("Unable to marshal JSON in timezones.", mlog.Err(err))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+
+	w.Write(b)
+}
+
+func getPermissions(c *Context, w http.ResponseWriter, r *http.Request) {
+
+	if !c.App.SessionHasPermissionTo(*c.App.Session(), model.PERMISSION_MANAGE_SYSTEM) {
+		c.SetPermissionError(model.PERMISSION_MANAGE_SYSTEM)
+		return
+	}
+
+	permissions := c.App.Permissions().GetAll()
+
+	b, err := json.Marshal(permissions)
+	
+	if err != nil {
+		c.Log.Warn("Unable to marshal JSON in permissions.", mlog.Err(err))
+		w.WriteHeader(http.StatusInternalServerError)
+	}	
 
 	w.Write(b)
 }
