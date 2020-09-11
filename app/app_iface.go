@@ -31,6 +31,7 @@ import (
 	"github.com/mattermost/mattermost-server/v5/services/imageproxy"
 	"github.com/mattermost/mattermost-server/v5/services/searchengine"
 	"github.com/mattermost/mattermost-server/v5/services/timezones"
+	"github.com/mattermost/mattermost-server/v5/services/permissions"
 	"github.com/mattermost/mattermost-server/v5/store"
 )
 
@@ -447,6 +448,7 @@ type AppIface interface {
 	DeletePostFiles(post *model.Post)
 	DeletePreferences(userId string, preferences model.Preferences) *model.AppError
 	DeleteReactionForPost(reaction *model.Reaction) *model.AppError
+	DeleteRole(roleId string) (*model.Role, *model.AppError)
 	DeleteScheme(schemeId string) (*model.Scheme, *model.AppError)
 	DeleteSidebarCategory(userId, teamId, categoryId string) *model.AppError
 	DeleteToken(token *model.Token) *model.AppError
@@ -769,6 +771,7 @@ type AppIface interface {
 	PermanentDeleteTeam(team *model.Team) *model.AppError
 	PermanentDeleteTeamId(teamId string) *model.AppError
 	PermanentDeleteUser(user *model.User) *model.AppError
+	Permissions() *permissions.Permissions
 	PluginCommandsForTeam(teamId string) []*model.Command
 	PluginContext() *plugin.Context
 	PostActionCookieSecret() []byte

@@ -22,6 +22,7 @@ import (
 	"github.com/mattermost/mattermost-server/v5/services/searchengine"
 	"github.com/mattermost/mattermost-server/v5/services/timezones"
 	"github.com/mattermost/mattermost-server/v5/utils"
+	"github.com/mattermost/mattermost-server/v5/services/permissions"
 )
 
 type App struct {
@@ -52,6 +53,7 @@ type App struct {
 	httpService httpservice.HTTPService
 	imageProxy  *imageproxy.ImageProxy
 	timezones   *timezones.Timezones
+	permissions *permissions.Permissions
 
 	context context.Context
 }
@@ -504,6 +506,9 @@ func (a *App) ImageProxy() *imageproxy.ImageProxy {
 }
 func (a *App) Timezones() *timezones.Timezones {
 	return a.timezones
+}
+func (a *App) Permissions() *permissions.Permissions {
+	return a.permissions
 }
 func (a *App) Context() context.Context {
 	return a.context

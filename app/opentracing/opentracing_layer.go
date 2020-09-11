@@ -32,6 +32,7 @@ import (
 	"github.com/mattermost/mattermost-server/v5/services/imageproxy"
 	"github.com/mattermost/mattermost-server/v5/services/searchengine"
 	"github.com/mattermost/mattermost-server/v5/services/timezones"
+	"github.com/mattermost/mattermost-server/v5/services/permissions"
 	"github.com/mattermost/mattermost-server/v5/services/tracing"
 	"github.com/mattermost/mattermost-server/v5/store"
 	"github.com/opentracing/opentracing-go/ext"
@@ -68,6 +69,7 @@ type OpenTracingAppLayer struct {
 	httpService httpservice.HTTPService
 	imageProxy  *imageproxy.ImageProxy
 	timezones   *timezones.Timezones
+	permissions *permissions.Permissions
 
 	context context.Context
 	ctx     context.Context
@@ -2834,6 +2836,28 @@ func (a *OpenTracingAppLayer) DeleteReactionForPost(reaction *model.Reaction) *m
 	}
 
 	return resultVar0
+}
+
+func (a *OpenTracingAppLayer) DeleteRole(roleId string) (*model.Role, *model.AppError) {
+	origCtx := a.ctx
+	span, newCtx := tracing.StartSpanWithParentByContext(a.ctx, "app.DeleteRole")
+
+	a.ctx = newCtx
+	a.app.Srv().Store.SetContext(newCtx)
+	defer func() {
+		a.app.Srv().Store.SetContext(origCtx)
+		a.ctx = origCtx
+	}()
+
+	defer span.Finish()
+	resultVar0, resultVar1 := a.app.DeleteRole(roleId)
+
+	if resultVar1 != nil {
+		span.LogFields(spanlog.Error(resultVar1))
+		ext.Error.Set(span, true)
+	}
+
+	return resultVar0, resultVar1
 }
 
 func (a *OpenTracingAppLayer) DeleteScheme(schemeId string) (*model.Scheme, *model.AppError) {
@@ -15237,6 +15261,7 @@ func NewOpenTracingAppLayer(childApp app.AppIface, ctx context.Context) *OpenTra
 	newApp.httpService = childApp.HTTPService()
 	newApp.imageProxy = childApp.ImageProxy()
 	newApp.timezones = childApp.Timezones()
+	newApp.permissions = childApp.Permissions()
 	newApp.context = childApp.Context()
 
 	return &newApp
@@ -15307,6 +15332,9 @@ func (a *OpenTracingAppLayer) ImageProxy() *imageproxy.ImageProxy {
 }
 func (a *OpenTracingAppLayer) Timezones() *timezones.Timezones {
 	return a.timezones
+}
+func (a *OpenTracingAppLayer) Permissions() *permissions.Permissions {
+	return a.permissions
 }
 func (a *OpenTracingAppLayer) Context() context.Context {
 	return a.context
